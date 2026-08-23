@@ -19,13 +19,13 @@
       --text-blue: #60a5fa;    
       --text-gold: #fbbf24;    
       --c-deity: #f97316;      
-      --c-star: #60a5fa;       
+      --c-star: #8b5cf6;       
       --c-stem-h: #f472b6;     
       --c-stem-e: #ffffff;     
       --tag-ma-bg: #d34e55;
       --tag-kong-bg: #7a7a90;
       --palace-text: #7a7a90;      
-      --edeity-text: #c4b5a2;      
+      --edeity-text: #2563eb;      
       --dark-stem-color: #ba4a00;  
       --dark-stem-bg: rgba(129, 140, 248, 0.1);
       --wx-wood: #4ade80;   
@@ -45,11 +45,11 @@
       --text-blue: #2563eb;
       --text-gold: #d97706;
       --c-deity: #d97706;
-      --c-star: #2563eb;
+      --c-star: #8b5cf6;
       --c-stem-h: #f472b6;
       --c-stem-e: #111827;
       --palace-text: #9ca3af;
-      --edeity-text: #8b5cf6;
+      --edeity-text: #2563eb;
       --dark-stem-color: #ba4a00;
       --dark-stem-bg: rgba(79, 70, 229, 0.08);
       --wx-wood: #16a34a;   
@@ -241,7 +241,7 @@
             <select id="jigongSelect" onchange="saveSettings()">
               <option value="ji2" selected>寄2宫</option><option value="y8y2">阳8阴2</option>
             </select>
-            <button class="btn-theme" onclick="toggleTheme()">🎨 主题</button>
+            <button class="btn-theme" onclick="toggleTheme()">☀️ 主题</button>
           </div>
         </div>
       </div>
@@ -363,7 +363,7 @@
         bigTaijiElem = null; taijiWrapper = null;
     }
     function animateBigTaiji() {
-        if (!isTaijiDragging && bigTaijiElem) { taijiAngle += 0.8; if (taijiAngle >= 360) taijiAngle -= 360; bigTaijiElem.style.transform = `rotate(${taijiAngle}deg)`; }
+        if (!isTaijiDragging && bigTaijiElem) { taijiAngle += 1.0; if (taijiAngle >= 360) taijiAngle -= 360; bigTaijiElem.style.transform = `rotate(${taijiAngle}deg)`; }
         if (bigTaijiElem) taijiReqFrame = requestAnimationFrame(animateBigTaiji);
     }
     function getAngle(x, y) {
@@ -574,7 +574,7 @@
             let csHtml = '';
             if (hasCS) {
               let csCombined = csList.join('/');
-              csHtml = `<span style="position:absolute; bottom:-12px; left:50%; transform:translateX(-50%) scale(0.85); font-size:10px; color:var(--text-gray); font-weight:normal; letter-spacing:-0.5px; white-space:nowrap; z-index:5;">${csCombined}</span>`;
+              csHtml = `<span style="position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:11px; color:var(--text-gray); font-weight:500; letter-spacing:-0.2px; white-space:nowrap; z-index:5;">${csCombined}</span>`;
             }
             return `<span style="position:relative; display:inline-block; vertical-align:bottom;">${stemsHtml}${csHtml}</span>`;
           }
@@ -666,7 +666,7 @@
             if (isMobile) {
               const file = new File([blob], fileName, { type: 'image/png' });
               if (!isWechat && navigator.canShare && navigator.canShare({ files: [file] })) {
-                navigator.share({ files: [file], title: 'OOGO奇门', text: 'OOGO奇门遁甲截图' }).then(() => { showToast('✅ 保存成功'); }).catch((error) => { console.log('用户取消或分享失败', error); }); return; 
+                navigator.share({ files: [file], title: 'OOGO', text: 'OOGO截图' }).then(() => { showToast('✅ 保存成功'); }).catch((error) => { console.log('用户取消或分享失败', error); }); return; 
               }
               const overlay = document.createElement('div'); overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
               const tip = document.createElement('div'); tip.innerText = '👉 请长按下方图片保存或分享 👈'; tip.style.cssText = 'color:#e2b45f;font-size:16px;margin-bottom:15px;font-weight:bold;letter-spacing:1px;';
