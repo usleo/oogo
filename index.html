@@ -599,7 +599,7 @@
           if (p.uiTagJx) tagsArr.push('<span class="tag-jx">刑</span>');  
           let isCrowded = tagsArr.length >= 3; 
           let tagsHtml = '';
-          if (tagsArr.length > 0) tagsHtml = `<div style="position:absolute; top:1px; right:1px; display:flex; gap:0; flex-direction:row-reverse; z-index:10;">${tagsArr.join('')}</div>`;
+          if (tagsArr.length > 0) tagsHtml = `<div style="position:absolute; top:1px; right:1px; display:flex; gap:0.5; flex-direction:row-reverse; z-index:10;">${tagsArr.join('')}</div>`;
           let hClass = hStem.indexOf('/') !== -1 ? 'right-item stem-h small-stem-h' : 'right-item stem-h';
           let eClass = eStem.indexOf('/') !== -1 ? 'right-item stem-e small-stem-e' : 'right-item stem-e';
           let innerHtml = '<div class="row"><div class="left-item deity deity-text">' + tDeity + '</div><div class="' + hClass + '">' + showHStem + '</div></div><div class="row"><div class="left-item star star-text">' + starName + '</div><div class="' + eClass + '">' + showEStem + '</div></div><div class="row"><div class="left-item gate-text" style="color:' + gateColor + ';">' + gateName + '</div><div class="right-item edeity-text">' + eDeity + '</div></div>';
