@@ -355,7 +355,6 @@ const OogoZhiRun = {
     return { chart: fullChart, method: "置闰法", juNumber: juNumber, isYangdun: isYang, termName: termName, termDate: astroStart, fuTouDate: FT_D, fuTouGanZhi: fuTouGanZhi, yuanIndex: yuanIndex, yuanName: yuanName, relation: relation, superShenDays: superShenDays, isTrueRun: isTrueRun, debugInfo: {} };
   }
 };
-
 const OogoChaiBu = {
   calculate(year, month, day, hour, min, sec = 0) {
     const fullChart = CalendarAdapter.getFullChart(year, month, day, hour, min, sec);
@@ -364,18 +363,32 @@ const OogoChaiBu = {
         let nextD = new Date(year, month - 1, day + 1);
         tYear = nextD.getFullYear(); tMonth = nextD.getMonth() + 1; tDay = nextD.getDate();
     }
-    const date = QimenUtil.dateOnly(tYear, tMonth, tDay);
-    const term = QimenSolarTerm.findPreviousTerm(date);
-    const termName = term.name, termDate = term.date;
-    const days = Math.floor((date.getTime() - termDate.getTime()) / 86400000);
-    let yuanIndex = Math.floor(days / 5);
-    if (yuanIndex < 0) yuanIndex = 0; if (yuanIndex > 2) yuanIndex = 2;
+    // 1. 获取当下真实节气
+    const jqInfo = CalendarAdapter.getSolarTermInfo(tYear, tMonth, tDay, hour, min, sec);
+    const termName = jqInfo.name;
+    const termDate = jqInfo.date;
+
+    // 2. 正统拆补：由日柱符头地支（子午卯酉上、寅申巳亥中、辰戌丑未下）决定三元
+    const fuTou = QimenFuTou.getFuTouDate(tYear, tMonth, tDay);
+    const yuanInfo = QimenFuTou.getYuanFromFuTou(fuTou);
+    const yuanIndex = yuanInfo.index; // 0上元, 1中元, 2下元
+
     const isYang = QimenSolarTerm.isYangDun(termName);
     const table = QimenSolarTerm.getJuTable(termName, isYang);
-    return { chart: fullChart, method: "拆补法", juNumber: table[yuanIndex], isYangdun: isYang, termName, termDate, yuanIndex, yuanName: ["上元", "中元", "下元"][yuanIndex], debugInfo: {} };
+    
+    return { 
+      chart: fullChart, 
+      method: "拆补法", 
+      juNumber: table[yuanIndex], 
+      isYangdun: isYang, 
+      termName, 
+      termDate, 
+      yuanIndex, 
+      yuanName: yuanInfo.name, 
+      debugInfo: {} 
+    };
   }
 };
-
 const OogoMaoShan = {
   calculate(year, month, day, hour, min, sec = 0) {
     const fullChart = CalendarAdapter.getFullChart(year, month, day, hour, min, sec);
