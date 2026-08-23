@@ -1,18 +1,6 @@
 /* ============================================================
  * OOGO 极简玄学历法核心 (Oogo Calendar Core)
- * 
- * [架构说明]
- * 本历法底座剥离自开源项目 6tail/lunar-javascript。
- * 剔除了佛教/道教神仙诞辰、现代法定节假日、多语言包及占卜神煞。
- * 仅保留绝对纯净的：儒略日转换、高精度真太阳时节气推算、四柱八字排盘逻辑。
- * 
- * [Original License of the Astro Engine]
- * Copyright (c) 2015-present, 6tail (MIT License)
- * Permission is hereby granted, free of charge, to any person obtaining a copy...
- * (The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.)
  * ============================================================ */
-
 ;(function(root, factory){
   if (typeof define === 'function' && define.amd) {
     define(factory);
@@ -22,11 +10,6 @@
     root.OogoCalendar = factory();
   }
 })(this, function(){
-
-  
-  // ==========================================
-  // 1. 公历与儒略日核心 (Solar)
-  // ==========================================
   var Solar = (function(){
     var _fromYmdHms = function(y, m, d, hour, minute, second) {
       if(1582===y && 10===m && d>4 && d<15) throw new Error('wrong solar date');
@@ -48,7 +31,6 @@
           return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + n - 1524.5;
         },
         getLunar: function(){ return Lunar.fromSolar(this); },
-        // 👇 这里是为你补回来的时间格式化与日期计算方法 👇
         toYmd: function(){
           var pad = function(n) { return (n<10?'0':'')+n; };
           return [this._p.year, pad(this._p.month), pad(this._p.day)].join('-');
@@ -64,7 +46,6 @@
         }
       };
     };
-// ... 保持下方代码不变 ...
     return {
       J2000: 2451545,
       fromYmdHms: function(y, m, d, h, i, s){ return _fromYmdHms(y, m, d, h, i, s); },
@@ -85,10 +66,6 @@
       }
     };
   })();
-
-  // ==========================================
-  // 2. 寿星天文历高精度算法核心 (ShouXingUtil)
-  // ==========================================
   var ShouXingUtil = (function(){
     var _decode = function(s) {
       var o = '0000000000', o2 = o + o;
@@ -103,7 +80,6 @@
               .replace(/A/g, o2 + o2 + o2).replace(/B/g, o2 + o2 + o).replace(/C/g, o2 + o2)
               .replace(/D/g, o2 + o).replace(/E/g, o2).replace(/F/g, o);
     };
-    
     return {
       PI_2: 2*Math.PI,
       ONE_THIRD: 1.0/3,
@@ -143,8 +119,6 @@
         2000, 63.87, 0.1, 0, 0,
         2005, 64.7, 0.21, 0, 0,
         2012, 66.8, 0.22, 0, 0,
-        // 2018, 69.0, 0.36, 0, 0,
-        // 使用skyfeild的DE440s△T预测数据拟合
         2016, 68.1024, 0.5456, -0.0542, -0.001172,
         2020, 69.3612, 0.0422, -0.0502, 0.006216,
         2024, 69.1752, -0.0335, -0.0048, 0.000811,
@@ -405,30 +379,19 @@
         t /= 10;
         var v = 0;
         var tn = 1;
-        var n1;
-        var n2;
-        var m;
-        var c;
-        var pn = 1;
-        var n0;
+        var n1, n2, m, c, pn = 1, n0;
         var m0 = this.XL0[pn + 1] - this.XL0[pn];
         for (var i = 0; i < 6; i++, tn *= t) {
           n1 = Math.floor(this.XL0[pn + i]);
           n2 = Math.floor(this.XL0[pn + 1 + i]);
           n0 = n2 - n1;
-          if (n0 === 0) {
-            continue;
-          }
+          if (n0 === 0) continue;
           if (n < 0) {
             m = n2;
           } else {
             m = Math.floor((3 * n * n0 / m0 + 0.5) + n1);
-            if (i !== 0) {
-              m += 3;
-            }
-            if (m > n2) {
-              m = n2;
-            }
+            if (i !== 0) m += 3;
+            if (m > n2) m = n2;
           }
           c = 0;
           for (var j = n1; j < m; j += 3) {
@@ -446,8 +409,7 @@
         var obl = ob[0].length;
         var tn = 1;
         var v = 0;
-        var j;
-        var c;
+        var j, c;
         var t2 = t * t;
         var t3 = t2 * t;
         var t4 = t3 * t;
@@ -455,27 +417,16 @@
         var tx = t - 10;
         v += (3.81034409 + 8399.684730072 * t - 3.319e-05 * t2 + 3.11e-08 * t3 - 2.033e-10 * t4) * this.SECOND_PER_RAD;
         v += 5028.792262 * t + 1.1124406 * t2 + 0.00007699 * t3 - 0.000023479 * t4 - 0.0000000178 * t5;
-        if (tx > 0) {
-          v += -0.866 + 1.43 * tx + 0.054 * tx * tx;
-        }
-        t2 /= 1e4;
-        t3 /= 1e8;
-        t4 /= 1e8;
-
+        if (tx > 0) v += -0.866 + 1.43 * tx + 0.054 * tx * tx;
+        t2 /= 1e4; t3 /= 1e8; t4 /= 1e8;
         n *= 6;
-        if (n < 0) {
-          n = obl;
-        }
+        if (n < 0) n = obl;
         for (var i = 0, x = ob.length; i < x; i++, tn *= t) {
           var f = ob[i];
           var l = f.length;
           var m = Math.floor((n * l / obl + 0.5));
-          if (i > 0) {
-            m += 6;
-          }
-          if (m >= l) {
-            m = l;
-          }
+          if (i > 0) m += 6;
+          if (m >= l) m = l;
           for (j = 0, c = 0; j < m; j += 6) {
             c += f[j] * Math.cos(f[j + 1] + t * f[j + 2] + t2 * f[j + 3] + t3 * f[j + 4] + t4 * f[j + 5]);
           }
@@ -507,16 +458,12 @@
         var t0 = this.DT_AT[size - 1];
         if (y >= y0) {
           var jsd = 31;
-          if (y > y0 + 100) {
-            return this.dtExt(y, jsd);
-          }
+          if (y > y0 + 100) return this.dtExt(y, jsd);
           return this.dtExt(y, jsd) - (this.dtExt(y0, jsd) - t0) * (y0 + 100 - y) / 100;
         }
         var i;
         for (i = 0; i < size; i += 5) {
-          if (y < this.DT_AT[i + 5]) {
-            break;
-          }
+          if (y < this.DT_AT[i + 5]) break;
         }
         var t1 = (y - this.DT_AT[i]) / (this.DT_AT[i + 5] - this.DT_AT[i]) * 10;
         var t2 = t1 * t1;
@@ -532,8 +479,7 @@
         return v;
       },
       saLonT:function(w){
-        var t;
-        var v = 628.3319653318;
+        var t, v = 628.3319653318;
         t = (w - 1.75347 - Math.PI) / v;
         v = this.ev(t);
         t += (w - this.saLon(t, 10)) / v;
@@ -545,8 +491,7 @@
         return this.mLon(t, mn) + (-3.4E-6) - (this.eLon(t, sn) + this.gxcSunLon(t) + Math.PI);
       },
       msaLonT:function(w){
-        var t;
-        var v = 7771.37714500204;
+        var t, v = 7771.37714500204;
         t = (w + 1.08472) / v;
         t += (w - this.msaLon(t, 3, 3)) / v;
         v = this.mv(t) - this.ev(t);
@@ -562,9 +507,7 @@
         return t;
       },
       msaLonT2:function(w){
-        var t;
-        var l;
-        var v = 7771.37714500204;
+        var t, l, v = 7771.37714500204;
         t = (w + 1.08472) / v;
         var t2 = t * t;
         t -= (-0.00003309 * t2 + 0.10976 * Math.cos(0.784758 + 8328.6914246 * t + 0.000152292 * t2) + 0.02224 * Math.cos(0.18740 + 7214.0628654 * t - 0.00021848 * t2) - 0.03342 * Math.cos(4.669257 + 628.307585 * t)) / v;
@@ -607,67 +550,46 @@
         return t * 36525 + this.ONE_THIRD;
       },
       calcShuo:function(jd){
-        var size = this.SHUO_KB.length;
-        var d = 0;
-        var pc = 14;
-        var i;
+        var size = this.SHUO_KB.length, d = 0, pc = 14, i;
         jd += Solar.J2000;
         var f1 = this.SHUO_KB[0] - pc, f2 = this.SHUO_KB[size - 1] - pc, f3 = 2436935;
         if (jd < f1 || jd >= f3) {
           d = Math.floor(this.shuoHigh(Math.floor((jd + pc - 2451551) / 29.5306) * Math.PI * 2) + 0.5);
         } else if (jd >= f1 && jd < f2) {
           for (i = 0; i < size; i += 2) {
-            if (jd + pc < this.SHUO_KB[i + 2]) {
-              break;
-            }
+            if (jd + pc < this.SHUO_KB[i + 2]) break;
           }
           d = this.SHUO_KB[i] + this.SHUO_KB[i + 1] * Math.floor((jd + pc - this.SHUO_KB[i]) / this.SHUO_KB[i + 1]);
           d = Math.floor(d + 0.5);
-          if (d === 1683460) {
-            d++;
-          }
+          if (d === 1683460) d++;
           d -= Solar.J2000;
         } else if (jd >= f2 && jd < f3) {
           d = Math.floor(this.shuoLow(Math.floor((jd + pc - 2451551) / 29.5306) * Math.PI * 2) + 0.5);
           var from = Math.floor((jd - f2) / 29.5306);
           var n = this.SB.substring(from, from+1);
-          if ('1' === n) {
-            d += 1;
-          } else if ('2' === n) {
-            d -= 1;
-          }
+          if ('1' === n) d += 1; else if ('2' === n) d -= 1;
         }
         return d;
       },
       calcQi:function(jd){
-        var size = this.QI_KB.length;
-        var d = 0;
-        var pc = 7, i;
+        var size = this.QI_KB.length, d = 0, pc = 7, i;
         jd += Solar.J2000;
         var f1 = this.QI_KB[0] - pc, f2 = this.QI_KB[size - 1] - pc, f3 = 2436935;
         if (jd < f1 || jd >= f3) {
           d = Math.floor(this.qiHigh(Math.floor((jd + pc - 2451259) / 365.2422 * 24) * Math.PI / 12) + 0.5);
         } else if (jd >= f1 && jd < f2) {
           for (i = 0; i < size; i += 2) {
-            if (jd + pc < this.QI_KB[i + 2]) {
-              break;
-            }
+            if (jd + pc < this.QI_KB[i + 2]) break;
           }
           d = this.QI_KB[i] + this.QI_KB[i + 1] * Math.floor((jd + pc - this.QI_KB[i]) / this.QI_KB[i + 1]);
           d = Math.floor(d + 0.5);
-          if (d === 1683460) {
-            d++;
-          }
+          if (d === 1683460) d++;
           d -= Solar.J2000;
         } else if (jd >= f2 && jd < f3) {
           d = Math.floor(this.qiLow(Math.floor((jd + pc - 2451259) / 365.2422 * 24) * Math.PI / 12) + 0.5);
           var from = Math.floor((jd - f2) / 365.2422 * 24);
           var n = this.QB.substring(from, from + 1);
-          if ('1' === n) {
-            d += 1;
-          } else if ('2' === n) {
-            d -= 1;
-          }
+          if ('1' === n) d += 1; else if ('2' === n) d -= 1;
         }
         return d;
       },
@@ -679,24 +601,16 @@
         var d = Math.PI / 12;
         var w = Math.floor((jd + 293) / 365.2422 * 24) * d;
         var a = this.qiAccurate(w);
-        if (a - jd > 5) {
-          return this.qiAccurate(w - d);
-        }
-        if (a - jd < -5) {
-          return this.qiAccurate(w + d);
-        }
+        if (a - jd > 5) return this.qiAccurate(w - d);
+        if (a - jd < -5) return this.qiAccurate(w + d);
         return a;
       }
     };
   })();
-  // ==========================================
-  // 3. 提纯版干支推算引擎 (Lunar)
-  // ==========================================
   var LunarUtil = {
     GAN: ['', '甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'],
     ZHI: ['', '子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'],
     JIA_ZI: ["甲子","乙丑","丙寅","丁卯","戊辰","己巳","庚午","辛未","壬申","癸酉","甲戌","乙亥","丙子","丁丑","戊寅","己卯","庚辰","辛巳","壬午","癸未","甲申","乙酉","丙戌","丁亥","戊子","己丑","庚寅","辛卯","壬辰","癸巳","甲午","乙未","丙申","丁酉","戊戌","己亥","庚子","辛丑","壬寅","癸卯","甲辰","乙巳","丙午","丁未","戊申","己酉","庚戌","辛亥","壬子","癸丑","甲寅","乙卯","丙辰","丁巳","戊午","己未","庚申","辛酉","壬戌","癸亥"],
-    // ⚠️ 核心修复1：首位必须是 DA_XUE，防止对象键值覆盖导致月柱错乱
     JIE_QI_IN_USE: ['DA_XUE', '冬至', '小寒', '大寒', '立春', '雨水', '惊蛰', '春分', '清明', '谷雨', '立夏', '小满', '芒种', '夏至', '小暑', '大暑', '立秋', '处暑', '白露', '秋分', '寒露', '霜降', '立冬', '小雪', '大雪', 'DONG_ZHI', 'XIAO_HAN', 'DA_HAN', 'LI_CHUN', 'YU_SHUI', 'JING_ZHE'],
     BASE_MONTH_ZHI_INDEX: 2,
     getTimeZhiIndex: function(hm){
@@ -704,7 +618,6 @@
       return Math.floor((hour + 1) / 2) % 12;
     }
   };
-
   var LunarYear = (function(){
     var _LEAP_11 = [75, 94, 170, 265, 322, 398, 469, 553, 583, 610, 678, 735, 754, 773, 849, 887, 936, 1050, 1069, 1126, 1145, 1164, 1183, 1259, 1278, 1308, 1373, 1403, 1441, 1460, 1498, 1555, 1593, 1612, 1631, 1642, 2033, 2128, 2147, 2242, 2614, 2728, 2910, 3062, 3244, 3339, 3616, 3711, 3730, 3825, 4007, 4159, 4197, 4322, 4341, 4379, 4417, 4531, 4599, 4694, 4713, 4789, 4808, 4971, 5085, 5104, 5161, 5180, 5199, 5294, 5305, 5476, 5677, 5696, 5772, 5791, 5848, 5886, 6049, 6068, 6144, 6163, 6258, 6402, 6440, 6497, 6516, 6630, 6641, 6660, 6679, 6736, 6774, 6850, 6869, 6899, 6918, 6994, 7013, 7032, 7051, 7070, 7089, 7108, 7127, 7146, 7222, 7271, 7290, 7309, 7366, 7385, 7404, 7442, 7461, 7480, 7491, 7499, 7594, 7624, 7643, 7662, 7681, 7719, 7738, 7814, 7863, 7882, 7901, 7939, 7958, 7977, 7996, 8034, 8053, 8072, 8091, 8121, 8159, 8186, 8216, 8235, 8254, 8273, 8311, 8330, 8341, 8349, 8368, 8444, 8463, 8474, 8493, 8531, 8569, 8588, 8626, 8664, 8683, 8694, 8702, 8713, 8721, 8751, 8789, 8808, 8816, 8827, 8846, 8884, 8903, 8922, 8941, 8971, 9036, 9066, 9085, 9104, 9123, 9142, 9161, 9180, 9199, 9218, 9256, 9294, 9313, 9324, 9343, 9362, 9381, 9419, 9438, 9476, 9514, 9533, 9544, 9552, 9563, 9571, 9582, 9601, 9639, 9658, 9666, 9677, 9696, 9734, 9753, 9772, 9791, 9802, 9821, 9886, 9897, 9916, 9935, 9954, 9973, 9992];
     var _LEAP_12 = [37, 56, 113, 132, 151, 189, 208, 227, 246, 284, 303, 341, 360, 379, 417, 436, 458, 477, 496, 515, 534, 572, 591, 629, 648, 667, 697, 716, 792, 811, 830, 868, 906, 925, 944, 963, 982, 1001, 1020, 1039, 1058, 1088, 1153, 1202, 1221, 1240, 1297, 1335, 1392, 1411, 1422, 1430, 1517, 1525, 1536, 1574, 3358, 3472, 3806, 3988, 4751, 4941, 5066, 5123, 5275, 5343, 5438, 5457, 5495, 5533, 5552, 5715, 5810, 5829, 5905, 5924, 6421, 6535, 6793, 6812, 6888, 6907, 7002, 7184, 7260, 7279, 7374, 7556, 7746, 7757, 7776, 7833, 7852, 7871, 7966, 8015, 8110, 8129, 8148, 8224, 8243, 8338, 8406, 8425, 8482, 8501, 8520, 8558, 8596, 8607, 8615, 8645, 8740, 8778, 8835, 8865, 8930, 8960, 8979, 8998, 9017, 9055, 9074, 9093, 9112, 9150, 9188, 9237, 9275, 9332, 9351, 9370, 9408, 9427, 9446, 9457, 9465, 9495, 9560, 9590, 9628, 9647, 9685, 9715, 9742, 9780, 9810, 9818, 9829, 9848, 9867, 9905, 9924, 9943, 9962, 10000];
@@ -756,7 +669,6 @@
       }
     };
   })();
-
   var Lunar = (function(){
     var _compute = function(year,hour,minute,second,solar,ly){
       var o = { jieQiList: [], jieQi: {} };
@@ -780,7 +692,6 @@
       }
       o.yearGanIndexExact = (gExact < 0 ? gExact + 10 : gExact) % 10;
       o.yearZhiIndexExact = (zExact < 0 ? zExact + 12 : zExact) % 12;
-
       var start = null, index = -3;
       for(var i = 0; i < LunarUtil.JIE_QI_IN_USE.length; i += 2){
         var end = o.jieQi[LunarUtil.JIE_QI_IN_USE[i]];
@@ -791,7 +702,6 @@
       var mo = (((o.yearGanIndexExact + (index < 0 ? 1 : 0)) % 5 + 1) * 2) % 10;
       o.monthGanIndexExact = ((index < 0 ? index + 10 : index) + mo) % 10;
       o.monthZhiIndexExact = ((index < 0 ? index + 12 : index) + LunarUtil.BASE_MONTH_ZHI_INDEX) % 12;
-
       var noon = Solar.fromYmdHms(solar.getYear(), solar.getMonth(), solar.getDay(), 12, 0, 0);
       var doffset = Math.floor(noon.getJulianDay()) - 11;
       var dayGanExact = doffset % 10, dayZhiExact = doffset % 12;
@@ -802,13 +712,11 @@
       }
       o.dayGanIndexExact = dayGanExact;
       o.dayZhiIndexExact = dayZhiExact;
-
       var timeZhiIndex = LunarUtil.getTimeZhiIndex(hm);
       o.timeZhiIndex = timeZhiIndex;
       o.timeGanIndex = (dayGanExact % 5 * 2 + timeZhiIndex) % 10;
       return o;
     };
-
     var _fromSolar = function(solar){
       var lunarYear = 0, lunarMonth = 0, lunarDay = 0;
       var ly = LunarYear.fromYear(solar.getYear());
@@ -853,11 +761,31 @@
           var near = null, name = null;
           var today = solar[wholeDay ? 'toYmd' : 'toYmdHms']();
           for(var key in this._p.jieQi){
-            // ⚠️ 核心修复2：移除过滤中气的逻辑，奇门遁甲需要所有 24 个节+气
             var solarJq = this._p.jieQi[key];
             var day = solarJq[wholeDay ? 'toYmd' : 'toYmdHms']();
             if(day > today) continue;
             if(null == near || day > near[wholeDay ? 'toYmd' : 'toYmdHms']()) {
+              near = solarJq; 
+              name = key;
+              if (name === 'DONG_ZHI') name = '冬至';
+              if (name === 'DA_HAN') name = '大寒';
+              if (name === 'XIAO_HAN') name = '小寒';
+              if (name === 'LI_CHUN') name = '立春';
+              if (name === 'DA_XUE') name = '大雪';
+              if (name === 'YU_SHUI') name = '雨水';
+              if (name === 'JING_ZHE') name = '惊蛰';
+            }
+          }
+          return { getName: function(){ return name; }, getSolar: function(){ return near; } };
+        },
+        getNextJieQi: function(wholeDay){
+          var near = null, name = null;
+          var today = solar[wholeDay ? 'toYmd' : 'toYmdHms']();
+          for(var key in this._p.jieQi){
+            var solarJq = this._p.jieQi[key];
+            var day = solarJq[wholeDay ? 'toYmd' : 'toYmdHms']();
+            if(day <= today) continue;
+            if(null == near || day < near[wholeDay ? 'toYmd' : 'toYmdHms']()) {
               near = solarJq; 
               name = key;
               if (name === 'DONG_ZHI') name = '冬至';
@@ -875,11 +803,16 @@
     };
     return { fromSolar: function(solar){ return _fromSolar(solar); } };
   })();
-
-  // 暴露纯粹的核心 API
   return {
     Solar: Solar,
     Lunar: Lunar,
     ShouXingUtil: ShouXingUtil
   };
 });
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    Solar: Solar,
+    Lunar: Lunar,
+    ShouXingUtil: ShouXingUtil
+  };
+}
