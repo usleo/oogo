@@ -20,9 +20,6 @@
       --text-gold: #fbbf24;    
       --c-deity: #f97316;      
       --c-star: #60a5fa;       
-      --c-gate-g: #22c55e;     
-      --c-gate-r: #dc2626;     
-      --c-gate-n: #b45309;     
       --c-stem-h: #f472b6;     
       --c-stem-e: #ffffff;     
       --tag-ma-bg: #d34e55;
@@ -49,9 +46,6 @@
       --text-gold: #d97706;
       --c-deity: #d97706;
       --c-star: #2563eb;
-      --c-gate-g: #16a34a;
-      --c-gate-r: #dc2626;
-      --c-gate-n: #632914;
       --c-stem-h: #f472b6;
       --c-stem-e: #111827;
       --palace-text: #9ca3af;
@@ -101,7 +95,7 @@
     .bazi-value { font-size: 16px; font-weight: bold; color: var(--text-gold); }
     .info-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-gray); margin-bottom: 8px; }
     .zhifu-row { margin: 12px 0; }
-    .pill-green { background: rgba(37, 185, 85, 0.1); color: var(--c-gate-g); border: 1px solid var(--c-gate-g); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    .pill-green { background: rgba(37, 185, 85, 0.1); color: var(--wx-wood); border: 1px solid var(--wx-wood); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
     .circle-logo { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--text-gold); background: var(--panel-bg); color: var(--text-main); display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 20px; line-height: 1; cursor: pointer; transition: 0.2s; box-shadow: 0 0 8px rgba(226,180,95,0.2); }
     .circle-logo:active { transform: scale(0.9); background: var(--text-gold); color: #000; }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--gold-line); border: 1px solid var(--gold-line); border-radius: 4px; padding: 1px; margin: 0; }
@@ -134,9 +128,6 @@
     .edeity-text { font-size: 13px; color: var(--edeity-text); font-weight: bold; }
     .deity { color: var(--c-deity); }
     .star { color: var(--c-star); }
-    .gate-g { color: var(--c-gate-g); }
-    .gate-r { color: var(--c-gate-r); }
-    .gate-n { color: var(--c-gate-n); }
     .stem-h { color: var(--c-stem-h); font-size: 17px; } 
     .stem-e { color: var(--c-stem-e); font-size: 14px; } 
     .highlight-ys {
@@ -317,7 +308,7 @@
       showGeJu = !showGeJu;
       const zhenBadge = document.querySelector('.badge-zhen');
       if (showGeJu) {
-        zhenBadge.style.background = 'var(--c-gate-r)';
+        zhenBadge.style.background = 'var(--wx-fire)';
         zhenBadge.style.color = '#fff';
       } else {
         zhenBadge.style.background = 'rgba(91, 146, 214, 0.15)';
@@ -343,11 +334,11 @@
       return dDate;
     }
     function getWuxingColor(char) {
-      if (['甲', '乙', '寅', '卯'].includes(char)) return 'var(--wx-wood)';   
-      if (['丙', '丁', '巳', '午'].includes(char)) return 'var(--wx-fire)';   
-      if (['戊', '己', '辰', '戌', '丑', '未'].includes(char)) return 'var(--wx-earth)'; 
-      if (['庚', '辛', '申', '酉'].includes(char)) return 'var(--wx-metal)'; 
-      if (['壬', '癸', '亥', '子'].includes(char)) return 'var(--wx-water)'; 
+      if (['甲', '乙', '寅', '卯', '伤', '杜', '伤门', '杜门'].includes(char)) return 'var(--wx-wood)';   
+      if (['丙', '丁', '巳', '午', '景', '景门'].includes(char)) return 'var(--wx-fire)';   
+      if (['戊', '己', '辰', '戌', '丑', '未', '生', '死', '中', '生门', '死门', '中门'].includes(char)) return 'var(--wx-earth)'; 
+      if (['庚', '辛', '申', '酉', '开', '惊', '开门', '惊门'].includes(char)) return 'var(--wx-metal)'; 
+      if (['壬', '癸', '亥', '子', '休', '休门'].includes(char)) return 'var(--wx-water)'; 
       return 'inherit';
     }
     function formatPillar(pillarStr) {
@@ -512,7 +503,7 @@
         let displayZfName = (Array.isArray(zfPalaceObj.star) ? zfPalaceObj.star[0] : (zfPalaceObj.star || '')).replace(/天|星/g, '');
         let zsName = (zsPalaceObj.gate || '').replace('门', '');
         let jqName = chart.solarTerm || (chart.timeInfo && chart.timeInfo.solarTerm) || "未知";
-        let runTag = isRun ? '<span style="color:var(--c-gate-r); font-weight:bold; margin-left:2px;">(闰)</span>' : '';
+        let runTag = isRun ? '<span style="color:var(--wx-fire); font-weight:bold; margin-left:2px;">(闰)</span>' : '';
         let superShenTip = (method === 'zhirun' && superShenDays > 0) ? `<span style="color:var(--text-gold); font-weight:bold; margin-left:2px;">(超神${superShenDays}天)</span>` : '';
         let yuanStr = (chart.yuan || '中元') + '第' + yuanDay + '天', dunStr = (chart.ju.type || '') + (chart.ju.number || '') + '局';
         let xunName = chart.xun ? chart.xun.name : "", xunDun = chart.xun ? chart.xun.stem : "";
@@ -589,9 +580,9 @@
           }
           let showHStem = renderStemWithCS(hStemList, p.heavenlyStemDetails, true);
           let showEStem = renderStemWithCS(eStemList, p.earthlyStemDetails, false);
-          let origGate = p.gate || ''; let gateName = origGate.replace('门', '');
-          let gateClass = (origGate === '生门' || origGate === '休门' || origGate === '开门') ? 'gate-g' : ((origGate === '杜门' || origGate === '景门') ? 'gate-n' : 'gate-r');
-          if (origGate === '中门') gateClass = 'gate-g';
+          let origGate = p.gate || ''; 
+          let gateName = origGate.replace('门', '');
+          let gateColor = getWuxingColor(gateName);
           let tagsArr = [];
           if (p.uiTagKong) tagsArr.push('<span class="tag-kong">空</span>');
           if (p.uiTagMa) tagsArr.push('<span class="tag-ma">马</span>');         
@@ -603,13 +594,13 @@
           if (tagsArr.length > 0) tagsHtml = `<div style="position:absolute; top:1px; right:1px; display:flex; gap:3px; flex-direction:row-reverse; z-index:10;">${tagsArr.join('')}</div>`;
           let hClass = hStem.indexOf('/') !== -1 ? 'right-item stem-h small-stem-h' : 'right-item stem-h';
           let eClass = eStem.indexOf('/') !== -1 ? 'right-item stem-e small-stem-e' : 'right-item stem-e';
-          let innerHtml = '<div class="row"><div class="left-item deity deity-text">' + tDeity + '</div><div class="' + hClass + '">' + showHStem + '</div></div><div class="row"><div class="left-item star star-text">' + starName + '</div><div class="' + eClass + '">' + showEStem + '</div></div><div class="row"><div class="left-item ' + gateClass + ' gate-text">' + gateName + '</div><div class="right-item edeity-text">' + eDeity + '</div></div>';
+          let innerHtml = '<div class="row"><div class="left-item deity deity-text">' + tDeity + '</div><div class="' + hClass + '">' + showHStem + '</div></div><div class="row"><div class="left-item star star-text">' + starName + '</div><div class="' + eClass + '">' + showEStem + '</div></div><div class="row"><div class="left-item gate-text" style="color:' + gateColor + ';">' + gateName + '</div><div class="right-item edeity-text">' + eDeity + '</div></div>';
           if (showGeJu && pos !== 5) {
             if (p.patterns && p.patterns.length > 0) {
                 let patHtml = p.patterns.map(pat => {
                     let isJi = pat.type.includes('吉');
                     let isXiong = pat.type.includes('凶');
-                    let color = isJi ? 'var(--c-gate-g)' : (isXiong ? 'var(--c-gate-r)' : 'var(--text-gold)');
+                    let color = isJi ? 'var(--wx-wood)' : (isXiong ? 'var(--wx-fire)' : 'var(--text-gold)');
                     let bg = isJi ? 'rgba(34, 197, 94, 0.15)' : (isXiong ? 'rgba(220, 38, 38, 0.15)' : 'rgba(251, 191, 36, 0.15)');
                     return `<div style="font-size:12px; font-weight:bold; color:${color}; background:${bg}; padding:2px 4px; border-radius:4px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:1px;">${pat.name}</div>`;
                 }).join('');
