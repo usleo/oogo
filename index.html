@@ -115,11 +115,16 @@
     .dz-left { left: 2px; top: 46%; transform: translateY(-50%); }
     .dz-right { right: 2px; top: 46%; transform: translateY(-50%); }
     .dz-out-top { top: -20px; }
-    .tag-ma { color: #ffffff; background: #d34e55; padding: 1px 4px; border-radius: 3px; font-size: 12px; font-weight: bold; border: none; }
-    .tag-kong { color: #ffffff; background: #7a7a90; padding: 1px 4px; border-radius: 3px; font-size: 12px; font-weight: bold; border: none; }
-    .tag-jx { color: #ffffff; background: #8b5cf6; padding: 1px 4px; border-radius: 3px; font-size: 12px; font-weight: bold; border: none; }
-    .tag-mu { color: #ffffff; background: #374151; padding: 1px 4px; border-radius: 3px; font-size: 12px; font-weight: bold; border: none; }
-    .tag-po { color: #ffffff; background: #d97706; padding: 1px 4px; border-radius: 3px; font-size: 12px; font-weight: bold; border: none; }
+    .tag-ma, .tag-kong, .tag-jx, .tag-mu, .tag-po {
+  color: #ffffff; padding: 0 3px; border-radius: 2px; font-size: 12px; font-weight: bold; border: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 16px; line-height: 1; box-sizing: border-box;
+}
+.tag-ma { background: #d34e55; }
+.tag-kong { background: #7a7a90; }
+.tag-jx { background: #8b5cf6; }
+.tag-mu { background: #374151; }
+.tag-po { background: #d97706; }
     .row { display: flex; justify-content: space-between; align-items: flex-end; }
     .left-item { text-align: left; font-weight: bold; line-height: 1; white-space: nowrap; letter-spacing: 1px; }
     .right-item { text-align: right; font-size: 14px; font-weight: bold; line-height: 1; white-space: nowrap; }
@@ -594,7 +599,7 @@
           if (p.uiTagJx) tagsArr.push('<span class="tag-jx">刑</span>');  
           let isCrowded = tagsArr.length >= 3; 
           let tagsHtml = '';
-          if (tagsArr.length > 0) tagsHtml = `<div style="position:absolute; top:1px; right:1px; display:flex; gap:3px; flex-direction:row-reverse; z-index:10;">${tagsArr.join('')}</div>`;
+          if (tagsArr.length > 0) tagsHtml = `<div style="position:absolute; top:1px; right:1px; display:flex; gap:0; flex-direction:row-reverse; z-index:10;">${tagsArr.join('')}</div>`;
           let hClass = hStem.indexOf('/') !== -1 ? 'right-item stem-h small-stem-h' : 'right-item stem-h';
           let eClass = eStem.indexOf('/') !== -1 ? 'right-item stem-e small-stem-e' : 'right-item stem-e';
           let innerHtml = '<div class="row"><div class="left-item deity deity-text">' + tDeity + '</div><div class="' + hClass + '">' + showHStem + '</div></div><div class="row"><div class="left-item star star-text">' + starName + '</div><div class="' + eClass + '">' + showEStem + '</div></div><div class="row"><div class="left-item gate-text" style="color:' + gateColor + ';">' + gateName + '</div><div class="right-item edeity-text">' + eDeity + '</div></div>';
