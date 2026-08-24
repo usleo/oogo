@@ -326,17 +326,34 @@
       }
     }
     function getEffectiveDate() {
-      let yIn = parseInt(document.getElementById('selY').value);
-      let mIn = parseInt(document.getElementById('selM').value);
-      let dIn = parseInt(document.getElementById('selD').value);
-      let hIn = parseInt(document.getElementById('selH').value);
-      let minIn = parseInt(document.getElementById('selMin').value);
-      let dDate = new Date(yIn, mIn - 1, dIn, hIn, minIn, 0);
-      let lng = parseFloat(document.getElementById('longitude').value);
-      if (document.getElementById('useTrueSolar').checked && !isNaN(lng)) { 
-        dDate.setMinutes(dDate.getMinutes() + (lng - 120) * 4); 
-      }
-      return dDate;
+  let yIn = parseInt(document.getElementById('selY').value);
+  let mIn = parseInt(document.getElementById('selM').value);
+  let dIn = parseInt(document.getElementById('selD').value);
+  let hIn = parseInt(document.getElementById('selH').value);
+  let minIn = parseInt(document.getElementById('selMin').value);
+  let dDate = new Date(yIn, mIn - 1, dIn, hIn, minIn, 0);
+  
+  let lng = parseFloat(document.getElementById('longitude').value);
+  
+  if (document.getElementById('useTrueSolar').checked && !isNaN(lng)) { 
+    // 1. 平太阳时差（经度差）：每相差1度，相差4分钟
+    let lngDiff = (lng - 120) * 4; 
+
+    // 2. 均时差 (Equation of Time)
+    // 计算当前是本年的第几天 (保留小数更精确)
+    let startOfYear = new Date(yIn, 0, 0); 
+    let N = (dDate - startOfYear) / 86400000; 
+    
+    // 套用天文学均时差公式 (B 为弧度)
+    let B = (2 * Math.PI / 365.24) * (N - 81);
+    let eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+
+    // 3. 计算真太阳时：当前时间 + 经度差 + 均时差
+    // 例如：新疆某地 lngDiff 可能是 -120分钟，11月的 eot 可能是 +16分钟
+    dDate.setMinutes(dDate.getMinutes() + lngDiff + eot); 
+  }
+  
+  return dDate;
     }
     function getWuxingColor(char) {
       if (['甲', '乙', '寅', '卯', '伤', '杜', '伤门', '杜门'].includes(char)) return 'var(--wx-wood)';   
